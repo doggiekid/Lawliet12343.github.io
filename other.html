@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Portfolio Gallery</title>
+    <style>
+        :root {
+            --primary-color: #6a4dff;
+            --secondary-color: #ff4d94;
+            --dark-bg: #121212;
+            --light-text: #f5f5f5;
+            --card-bg: #1e1e1e;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--light-text);
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: #ffffff;
+            color: var(--primary-color);
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        .section-title:after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            margin: 0.5rem auto 0;
+        }
+        
+        .gallery-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .gallery-tab {
+            padding: 0.8rem 1.5rem;
+            margin: 0.5rem;
+            background-color: var(--card-bg);
+            border: none;
+            border-radius: 50px;
+            color: var(--light-text);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .gallery-tab.active, .gallery-tab:hover {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            height: 250px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover {
+            transform: scale(1.03);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+        
+        .gallery-item-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0));
+            padding: 1.5rem;
+            color: white;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover .gallery-item-overlay {
+            transform: translateY(0);
+        }
+        
+        .gallery-item-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .gallery-item-category {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 2rem;
+        }
+        
+        .lightbox.active {
+            display: flex;
+        }
+        
+        .lightbox-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+        }
+        
+        .lightbox-image {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 5px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .lightbox-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 1001;
+        }
+        
+        .lightbox-caption {
+            position: absolute;
+            bottom: -40px;
+            left: 0;
+            right: 0;
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            border-radius: 0 0 5px 5px;
+        }
+        
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .lightbox-nav-btn {
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .lightbox-nav-btn:hover {
+            background: rgba(106, 77, 255, 0.8);
+        }
+        
+        .back-to-home {
+            text-align: center;
+            margin-top: 3rem;
+        }
+        
+        footer {
+            background-color: #0c0c0c;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+        
+        @media (max-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .gallery-item {
+                height: 200px;
+            }
+            
+            .lightbox-content {
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Project Gallery</h1>
+            <p class="subtitle">Visual showcase of my game development projects</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        
+        <div class="gallery-grid">
+            <!-- Urban Parkour Images -->
+            <div class="gallery-item" data-category="urban-parkour">
+                <img src="img/Screenshot 2024-07-05 211030.png" alt="Urban Parkour - Game View">
+                <div class="gallery-item-overlay">
+                    <div class="gallery-item-title">Game View</div>
+                    <div class="gallery-item-category">horror game Interface </div>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="urban-parkour">
+                <img src="img/girl.jpg" alt="Urban Parkour - Mobile Interface">
+                <div class="gallery-item-overlay">
+                    <div class="gallery-item-title">Art work</div>
+                    <div class="gallery-item-category">Art work</div>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="urban-parkour">
+                <img src="img/Screenshot_2024-07-22-02-52-26-89_1c337646f29875672b5a61192b9010f9.jpg" alt="Urban Parkour - Gameplay">
+                <div class="gallery-item-overlay">
+                    <div class="gallery-item-title">Gameplay</div>
+                    <div class="gallery-item-category">Urban Parkour</div>
+                </div>
+            </div>
+            
+            <!-- Horror Maze Images -->
+            <div class="gallery-item" data-category="horror-maze">
+                <img src="img/3.jpg" alt="Horror Maze - Dark Environment">
+                <div class="gallery-item-overlay">
+                    <div class="gallery-item-title">3D Glasses Model</div>
+                    <div class="gallery-item-category">Glasses Model</div>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="horror-maze">
+                <img src="img/IMG_0880.jpg" alt="Horror Maze - Atmospheric Scene">
+                <div class="gallery-item-overlay">
+                    <div class="gallery-item-title">Art work</div>
+                    <div class="gallery-item-category">Art work</div>
+                </div>
+            </div>
+            
+            <!-- Character Designs -->
+            <div class="gallery-item" data-category="concept-art">
+                <img src="img/knight.png" alt="Character Design - Knight">
+                <div class="gallery-item-overlay">
+                    <div class="gallery-item-title">Knight Character</div>
+                    <div class="gallery-item-category">unity work</div>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="concept-art">
+                <img src="img/Lim Chun Sang Kirin.jpg" alt="Character Design - Kirin">
+                <div class="gallery-item-overlay">
+                    <div class="gallery-item-title">Kirin Character</div>
+                    <div class="gallery-item-category">Character Design</div>
+                </div>
+            </div>
+            
+            <!-- Mini Games Images -->
+            <div class="gallery-item" data-category="mini-games">
+                <img src="img/Screenshot 2024-07-05 210905.png" alt="Mini Game - Interface">
+                <div class="gallery-item-overlay">
+                    <div class="gallery-item-title">Game Interface</div>
+                    <div class="gallery-item-category">horror game Interface</div>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="mini-games">
+                <img src="img/Screenshot 2024-07-05 211009.png" alt="Mini Game - Level Design">
+                <div class="gallery-item-overlay">
+                    <div class="gallery-item-title">Level Design</div>
+                    <div class="gallery-item-category">horror game Interface</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="back-to-home">
+            <a href="index.html" class="btn">Back to Portfolio</a>
+        </div>
+    </div>
+    
+    <!-- Lightbox for image viewing -->
+    <div class="lightbox">
+        <button class="lightbox-close">&times;</button>
+        <div class="lightbox-content">
+            <img src="" alt="" class="lightbox-image">
+            <div class="lightbox-caption"></div>
+            <div class="lightbox-nav">
+                <button class="lightbox-nav-btn prev">&lt;</button>
+                <button class="lightbox-nav-btn next">&gt;</button>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 Game Developer Portfolio. All rights reserved.</p>
+    </footer>
+    
+    <script>
+        // Gallery filtering
+        const galleryTabs = document.querySelectorAll('.gallery-tab');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        
+        galleryTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                galleryTabs.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Get filter value
+                const filter = tab.getAttribute('data-filter');
+                
+                // Filter gallery items
+                galleryItems.forEach(item => {
+                    if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+        // Lightbox functionality
+        const lightbox = document.querySelector('.lightbox');
+        const lightboxImage = document.querySelector('.lightbox-image');
+        const lightboxCaption = document.querySelector('.lightbox-caption');
+        const lightboxClose = document.querySelector('.lightbox-close');
+        const lightboxPrev = document.querySelector('.lightbox-nav-btn.prev');
+        const lightboxNext = document.querySelector('.lightbox-nav-btn.next');
+        let currentImageIndex = 0;
+        let visibleItems = [];
+        
+        // Open lightbox when clicking on a gallery item
+        galleryItems.forEach((item, index) => {
+            item.addEventListener('click', () => {
+                // Get only visible items
+                visibleItems = Array.from(galleryItems).filter(item => item.style.display !== 'none');
+                currentImageIndex = visibleItems.indexOf(item);
+                
+                const imgSrc = item.querySelector('img').getAttribute('src');
+                const caption = item.querySelector('.gallery-item-title').textContent;
+                
+                lightboxImage.setAttribute('src', imgSrc);
+                lightboxCaption.textContent = caption;
+                lightbox.classList.add('active');
+            });
+        });
+        
+        // Close lightbox
+        lightboxClose.addEventListener('click', () => {
+            lightbox.classList.remove('active');
+        });
+        
+        // Close lightbox when clicking outside the image
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                lightbox.classList.remove('active');
+            }
+        });
+        
+        // Previous image
+        lightboxPrev.addEventListener('click', () => {
+            currentImageIndex = (currentImageIndex - 1 + visibleItems.length) % visibleItems.length;
+            const item = visibleItems[currentImageIndex];
+            const imgSrc = item.querySelector('img').getAttribute('src');
+            const caption = item.querySelector('.gallery-item-title').textContent;
+            
+            lightboxImage.setAttribute('src', imgSrc);
+            lightboxCaption.textContent = caption;
+        });
+        
+        // Next image
+        lightboxNext.addEventListener('click', () => {
+            currentImageIndex = (currentImageIndex + 1) % visibleItems.length;
+            const item = visibleItems[currentImageIndex];
+            const imgSrc = item.querySelector('img').getAttribute('src');
+            const caption = item.querySelector('.gallery-item-title').textContent;
+            
+            lightboxImage.setAttribute('src', imgSrc);
+            lightboxCaption.textContent = caption;
+        });
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (!lightbox.classList.contains('active')) return;
+            
+            if (e.key === 'Escape') {
+                lightbox.classList.remove('active');
+            } else if (e.key === 'ArrowLeft') {
+                lightboxPrev.click();
+            } else if (e.key === 'ArrowRight') {
+                lightboxNext.click();
+            }
+        });
+    </script>
+</body>
+</html>
